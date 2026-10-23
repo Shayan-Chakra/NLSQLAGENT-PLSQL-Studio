@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Generate Oracle PL/SQL from natural-language instructions with NLSQLAGENT.">
+  <title>NLSQLAGENT — PL/SQL Studio</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#top" aria-label="NLSQLAGENT home">
+        <span class="brand-mark">N<span>·</span></span>
+        <span class="brand-copy"><strong>NLSQLAGENT</strong><small>PL/SQL STUDIO</small></span>
+      </a>
+      <div class="sidebar-rule"></div>
+      <p class="nav-label">WORKSPACE</p>
+      <a class="nav-item active" href="#generatorSection"><span class="nav-icon">⌘</span><span>Code generator</span><span class="nav-arrow">↗</span></a>
+      <a class="nav-item" href="#promptLibrary"><span class="nav-icon">✦</span><span>Prompt library</span></a>
+      <button class="nav-item nav-button" id="sidebarSchemaBtn" type="button"><span class="nav-icon">▦</span><span>Schema reference</span></button>
+      <div class="sidebar-section-label">QUICK TOOLS</div>
+      <button class="nav-item nav-button" id="sidebarClearBtn" type="button"><span class="nav-icon">＋</span><span>New request</span></button>
+      <button class="nav-item nav-button" id="sidebarThemeBtn" type="button"><span class="nav-icon">◐</span><span>Toggle appearance</span></button>
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-safety">
+        <span class="safety-symbol">✓</span>
+        <div><strong>Generation-only mode</strong><p>No database connected. Code is never executed.</p></div>
+      </div>
+      <div class="sidebar-footer"><span class="footer-pulse"></span> Gemini-powered · Oracle PL/SQL</div>
+    </aside>
+
+    <main class="main-content" id="top">
+      <header class="topbar">
+        <div class="breadcrumbs"><span>Workspace</span><span class="crumb-divider">/</span><strong>PL/SQL Generator</strong></div>
+        <div class="topbar-actions">
+          <div class="api-status" id="apiStatus"><span class="status-dot" id="apiStatusDot"></span><span id="apiStatusText">Checking backend…</span></div>
+          <button class="icon-button" id="themeToggle" title="Toggle light/dark theme" aria-label="Toggle light/dark theme" type="button">◐</button>
+          <a class="help-link" href="#howItWorks">How it works <span>↗</span></a>
+        </div>
+      </header>
+
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="eyebrow-dot"></span> ORACLE DEVELOPER TOOLKIT</div>
+          <h1>Turn ideas into <span>PL/SQL.</span></h1>
+          <p>Describe your logic in plain English. Get structured Oracle PL/SQL code, a clear explanation, and a preliminary review—all in one workspace.</p>
+          <div class="hero-tags"><span>✦ Natural language</span><span>⌘ Oracle syntax</span><span>◉ Review before use</span></div>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="orb orb-one"></div><div class="orb orb-two"></div>
+          <div class="floating-code"><div class="mini-window-top"><i></i><i></i><i></i><span>anonymous_block.sql</span></div><div class="mini-code"><b>01</b> <em>DECLARE</em><br><b>02</b> &nbsp;v_count <strong>NUMBER</strong>;<br><b>03</b> <em>BEGIN</em><br><b>04</b> &nbsp;SELECT COUNT(*)<br><b>05</b> &nbsp;INTO v_count...<br><b>06</b> <em>END;</em></div></div>
+          <div class="visual-chip"><span>✦</span> Built for Oracle</div>
+        </div>
+      </section>
+
+      <div class="feature-strip">
+        <div class="feature-item"><span class="feature-icon purple">✦</span><span><strong>Schema-aware</strong><small>Uses your table reference</small></span></div>
+        <div class="feature-item"><span class="feature-icon blue">⌘</span><span><strong>Multiple code types</strong><small>Blocks, functions, packages</small></span></div>
+        <div class="feature-item"><span class="feature-icon green">✓</span><span><strong>Review-first</strong><small>No live execution</small></span></div>
+      </div>
+
+      <section class="panel question-panel" id="generatorSection">
+        <div class="section-heading">
+          <div class="heading-left"><span class="step-number">01</span><div><h2>Describe what you need</h2><p>Start with a task, business rule, or programming goal.</p></div></div>
+          <span class="mode-pill"><span class="mode-dot"></span> PL/SQL mode</span>
+        </div>
+        <form id="questionForm">
+          <div class="label-row"><label for="question">Your instructions</label><span class="counter" id="charCount">0 / 1500</span></div>
+          <textarea id="question" name="question" maxlength="1500" placeholder="Example: Create a procedure that calculates the annual salary for an employee and handles the case when the employee does not exist…" required></textarea>
+          <div class="prompt-tools">
+            <button class="text-action" id="improvePromptBtn" type="button"><span>✦</span> Refine prompt</button>
+            <button class="text-action muted-action" id="copyPromptBtn" type="button"><span>▣</span> Copy prompt</button>
+            <button class="text-action muted-action" id="clearPromptBtn" type="button"><span>×</span> Clear</button>
+            <span class="shortcut-hint">Tip: <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to generate</span>
+          </div>
+
+          <div class="options-grid">
+            <div class="option-field"><label for="codeType">Code type</label><select id="codeType" name="codeType"><option value="auto">Auto-detect best fit</option><option value="anonymous">Anonymous block</option><option value="procedure">Stored procedure</option><option value="function">Stored function</option><option value="package">Package + package body</option><option value="trigger">Database trigger</option><option value="cursor">Cursor / loop example</option><option value="exception">Exception handling</option></select></div>
+            <label class="check-option"><input id="includeComments" type="checkbox" checked><span class="fake-check"></span><span><strong>Add comments</strong><small>Explain key steps</small></span></label>
+            <label class="check-option"><input id="includeExceptions" type="checkbox" checked><span class="fake-check"></span><span><strong>Handle exceptions</strong><small>Where appropriate</small></span></label>
+            <label class="check-option"><input id="includeExample" type="checkbox"><span class="fake-check"></span><span><strong>Example usage</strong><small>In the explanation</small></span></label>
+          </div>
+
+          <div class="form-footer"><span class="field-hint"><span class="lock-icon">◈</span> Generated for review only · Not compiled or executed</span><button id="generateBtn" type="submit" class="primary-button"><span class="button-spark">✦</span> Generate PL/SQL <span aria-hidden="true">→</span></button></div>
+        </form>
+      </section>
+
+      <section class="prompt-library" id="promptLibrary">
+        <div class="library-heading"><div><p class="eyebrow small-eyebrow">START WITH A TEMPLATE</p><h2>Prompt library</h2><p>Choose a pattern to fill the request box.</p></div><span class="library-count">8 templates</span></div>
+        <div class="template-grid">
+          <button class="template-card" type="button" data-code-type="anonymous" data-question="Write an anonymous PL/SQL block that counts employees and prints the count using DBMS_OUTPUT.PUT_LINE."><span class="template-icon violet">{ }</span><span class="template-title">Anonymous block</span><span class="template-description">A one-time task with declarations and executable logic.</span><span class="template-footer">DECLARE · BEGIN <b>↗</b></span></button>
+          <button class="template-card" type="button" data-code-type="procedure" data-question="Create a procedure named SHOW_EMPLOYEE_COUNT that counts employees and prints the count using DBMS_OUTPUT.PUT_LINE."><span class="template-icon blue">ƒx</span><span class="template-title">Stored procedure</span><span class="template-description">Reusable logic with parameters and clear intent.</span><span class="template-footer">CREATE PROCEDURE <b>↗</b></span></button>
+          <button class="template-card" type="button" data-code-type="function" data-question="Create a function named GET_ANNUAL_SALARY that accepts a monthly salary and returns the annual salary."><span class="template-icon green">ƒ</span><span class="template-title">Stored function</span><span class="template-description">Return a value from reusable business logic.</span><span class="template-footer">RETURN · FUNCTION <b>↗</b></span></button>
+          <button class="template-card" type="button" data-code-type="package" data-question="Create an employee utility package with a package specification and package body, including a procedure to print the employee count."><span class="template-icon amber">▤</span><span class="template-title">Package</span><span class="template-description">Organize related procedures, functions, and types.</span><span class="template-footer">SPEC + BODY <b>↗</b></span></button>
+          <button class="template-card" type="button" data-code-type="trigger" data-question="Create a trigger that records a salary change when an employee salary is updated. If an audit table is not in the schema, explain what table needs to be created rather than inventing it."><span class="template-icon rose">⚡</span><span class="template-title">Trigger</span><span class="template-description">React to INSERT, UPDATE, or DELETE events.</span><span class="template-footer">CREATE TRIGGER <b>↗</b></span></button>
+          <button class="template-card" type="button" data-code-type="cursor" data-question="Write an anonymous PL/SQL block that loops through employees using a cursor FOR loop and prints each employee name and salary."><span class="template-icon cyan">↻</span><span class="template-title">Cursor & loop</span><span class="template-description">Process rows one by one with cursor logic.</span><span class="template-footer">CURSOR · LOOP <b>↗</b></span></button>
+          <button class="template-card" type="button" data-code-type="exception" data-question="Write an anonymous PL/SQL block that looks up employee 101, prints the employee name, and handles NO_DATA_FOUND and TOO_MANY_ROWS appropriately."><span class="template-icon orange">!</span><span class="template-title">Exception handling</span><span class="template-description">Handle expected Oracle errors cleanly.</span><span class="template-footer">EXCEPTION · RAISE <b>↗</b></span></button>
+          <button class="template-card" type="button" data-code-type="anonymous" data-question="Write an anonymous PL/SQL block that demonstrates IF / ELSIF / ELSE logic using a declared salary variable and prints the correct salary category."><span class="template-icon slate">◇</span><span class="template-title">Conditions</span><span class="template-description">Use variables, branching, and decision rules.</span><span class="template-footer">IF · CASE <b>↗</b></span></button>
+        </div>
+      </section>
+
+      <section class="schema-panel" id="schemaPanel">
+        <div class="schema-title"><span class="schema-icon">▦</span><div><strong>Schema reference</strong><p>Metadata is used as context only. No database is connected.</p></div><button id="schemaToggle" class="text-button" type="button" aria-expanded="false">View schema <span>＋</span></button></div>
+        <pre id="schemaContent" class="schema-content hidden"></pre>
+      </section>
+
+      <section id="resultPanel" class="panel result-panel hidden" aria-live="polite">
+        <div class="section-heading result-heading"><div class="heading-left"><span class="step-number">02</span><div><h2 id="resultTitle">Generated PL/SQL</h2><p>Review the code before copying it into your Oracle development environment.</p></div></div><span id="resultBadge" class="result-badge">READY</span></div>
+        <div id="errorMessage" class="message error-message hidden" role="alert"></div>
+        <div id="clarificationMessage" class="clarification hidden"></div>
+        <div id="outputDetails" class="output-details hidden"><span class="detail-chip" id="riskChip">Risk: REVIEW</span><span class="detail-chip" id="lineChip">0 lines</span><span class="detail-chip" id="charChip">0 characters</span><button id="newRequestBtn" class="text-action" type="button">＋ New request</button></div>
+        <div id="codeArea" class="code-area hidden">
+          <div class="code-toolbar"><div class="code-file-label"><span class="file-icon">PL</span><span><strong id="fileName">generated_plsql.sql</strong><small>Oracle PL/SQL source</small></span></div><div class="code-actions"><button id="copyBtn" class="small-button" type="button" title="Copy code">▣ <span>Copy</span></button><button id="editBtn" class="small-button" type="button" title="Edit generated code">✎ <span>Edit</span></button><button id="wrapBtn" class="small-button" type="button" title="Toggle code wrapping">↔ <span>Wrap</span></button><button id="downloadBtn" class="small-button download-button" type="button" title="Download code">↓ <span>Download</span></button></div></div>
+          <div id="codePreviewWrap" class="code-preview-wrap"><pre id="codePreview"><code id="codeOutput"></code></pre></div>
+          <textarea id="codeEditor" class="code-editor hidden" spellcheck="false" aria-label="Edit generated PL/SQL code"></textarea>
+          <div id="editFooter" class="edit-footer hidden"><span>Edits are local; generated code is not revalidated by Oracle.</span><button id="saveEditBtn" class="primary-button compact-button" type="button">Save edits</button><button id="cancelEditBtn" class="ghost-button" type="button">Cancel</button></div>
+        </div>
+        <div id="explanationArea" class="info-card explanation-area hidden"><span class="info-icon">✦</span><div><h3>What this code does</h3><p id="explanationOutput"></p><button id="copyExplanationBtn" class="inline-action" type="button">Copy explanation</button></div></div>
+        <div id="validationArea" class="info-card validation-area hidden"><span class="info-icon check-icon">✓</span><div><h3>Preliminary structure check</h3><p id="validationOutput"></p></div></div>
+        <div id="safetyNote" class="safety-note hidden"><span>ⓘ</span><span id="safetyNoteText">Generated only. Not compiled or executed.</span></div>
+        <div class="result-bottom-actions hidden" id="resultBottomActions"><button id="regenerateBtn" class="ghost-button" type="button">↻ Regenerate</button><button id="startOverBtn" class="ghost-button" type="button">＋ Start new request</button></div>
+      </section>
+
+      <section class="how-panel" id="howItWorks"><div class="how-title"><p class="eyebrow small-eyebrow">SIMPLE BY DESIGN</p><h2>From idea to code in 3 steps</h2></div><div class="how-steps"><div><span>01</span><strong>Describe</strong><p>Explain the business logic in everyday language.</p></div><div><span>02</span><strong>Generate & review</strong><p>Review the code, explanation, and preliminary check.</p></div><div><span>03</span><strong>Copy to your IDE</strong><p>Test it in a safe Oracle development schema before use.</p></div></div><div class="how-disclaimer">This tool generates code only. A preliminary check is not Oracle compilation, and generated PL/SQL may have side effects.</div></section>
+
+      <footer class="page-footer"><span class="footer-brand">NLSQLAGENT</span><span>Gemini API · Oracle PL/SQL</span><span class="footer-safe"><span class="footer-pulse"></span> No database connection</span></footer>
+    </main>
+  </div>
+  <div id="toastRegion" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+  <script src="/static/script.js" defer></script>
+</body>
+</html>
