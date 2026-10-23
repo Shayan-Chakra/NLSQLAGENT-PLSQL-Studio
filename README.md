@@ -12,9 +12,11 @@ A web-based PL/SQL generation studio powered by Gemini, built with **HTML, CSS, 
   <img alt="Frontend" src="https://img.shields.io/badge/Frontend-HTML%20%7C%20CSS%20%7C%20JS-E34F26?logo=html5&logoColor=white">
   <img alt="Gemini API" src="https://img.shields.io/badge/AI-Gemini-4285F4?logo=googlegemini&logoColor=white">
   <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green.svg">
+  <a href="https://nlsqlagent-plsql-studio.onrender.com/"><img alt="Live Demo" src="https://img.shields.io/badge/Live-Demo-8A63D2?logo=render&logoColor=white"></a>
 </p>
 
-**Live Demo:** 🚧 Not deployed yet — follow [Deploy a Live Demo](#-deploy-a-live-demo) to publish it.
+**Live Demo:** 🚀 [Open NLSQLAGENT PL/SQL Studio](https://nlsqlagent-plsql-studio.onrender.com/)  
+**Source Code:** [GitHub Repository](https://github.com/Shayan-Chakra/NLSQLAGENT-PLSQL-Studio)
 
 </div>
 
@@ -29,7 +31,7 @@ A web-based PL/SQL generation studio powered by Gemini, built with **HTML, CSS, 
 - [Quick start](#-quick-start)
 - [Configuration](#-configuration)
 - [Run locally](#-run-locally)
-- [Deploy a live demo](#-deploy-a-live-demo)
+- [Live demo and deployment](#-live-demo-and-deployment)
 - [Example prompts](#-example-prompts)
 - [Project structure](#-project-structure)
 - [Security and limitations](#-security-and-limitations)
@@ -186,11 +188,17 @@ To stop the server, press `Ctrl+C` in the terminal.
 
 The backend reads these settings from the local `.env` file during development and from environment variables when deployed. No Oracle configuration is used.
 
-## 🌐 Deploy a live demo
+## 🌐 Live demo and deployment
 
-A public demo URL has **not been configured in this README yet**. The app needs to be deployed before a real “Live Demo” link can be added. One straightforward option is [Render](https://render.com/), which can run the FastAPI backend and serve the frontend from the same web service.
+**Try the application:** [https://nlsqlagent-plsql-studio.onrender.com/](https://nlsqlagent-plsql-studio.onrender.com/)
 
-### Deploy on Render
+The application is hosted on Render. The live service URL above is the demo entry point; availability depends on the deployment, provider status, and Gemini API quota configured for the service.
+
+### Deployment configuration (Render)
+
+If you maintain or redeploy the application, use the following configuration. Render can run the FastAPI backend and serve the frontend from the same web service.
+
+### Deploy or update on Render
 
 1. Push this project to a GitHub repository.
 2. Sign in to [Render](https://render.com/) and connect your GitHub account.
@@ -213,11 +221,7 @@ A public demo URL has **not been configured in this README yet**. The app needs 
    - `GEMINI_MODEL` — a model ID available to your project
 7. Deploy and open the public URL Render assigns to the service.
 8. Test PL/SQL generation using the prompts below.
-9. Replace the “Live Demo” line at the top of this README with your actual deployed URL, for example:
-
-   ```markdown
-   **Live Demo:** [Open PL/SQL Studio](https://YOUR-SERVICE-NAME.onrender.com)
-   ```
+9. Confirm the service opens at the Live Demo URL listed at the top of this README. If Render assigns a different URL, update the Live Demo link accordingly.
 
 Use Render's environment-variable settings for secrets; do not add the key to source code, `render.yaml`, or README. Review the hosting provider's current plans and limits before publishing. See the [Render FastAPI deployment guide](https://render.com/docs/deploy-fastapi) and [environment-variable guide](https://render.com/docs/configure-environment-variables).
 
@@ -278,7 +282,11 @@ Set `GEMINI_MODEL` to a model currently available to your Google AI Studio proje
 
 Check the [Gemini rate-limit documentation](https://ai.google.dev/gemini-api/docs/rate-limits) and your [rate-limit dashboard](https://ai.dev/rate-limit). Wait for quota reset or review another available model or billing option.
 
-### The page does not load
+### Live demo is slow or temporarily unavailable
+
+The hosted service may need to start after a period of inactivity, or the configured Gemini model may have exhausted its API quota. Check the Render service logs and its configured `GEMINI_MODEL` / `GEMINI_API_KEY` environment variables. Never place API keys in frontend JavaScript or the README.
+
+### The page does not load locally
 
 Make sure the virtual environment is activated, dependencies are installed, and this command is running from the project root:
 
@@ -294,7 +302,7 @@ Then open `http://127.0.0.1:8000`.
 - [x] Gemini-powered PL/SQL generation
 - [x] Prompt templates and code download
 - [x] No database dependency for generation
-- [ ] Deploy and add a public demo URL
+- [x] Deploy and add a public demo URL
 - [ ] Add automated tests for output parsing and structural checks
 - [ ] Consider optional Oracle compilation in a separate, isolated test environment
 
